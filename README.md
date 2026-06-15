@@ -10,10 +10,10 @@ Setiap anggota kelompok bertanggung jawab penuh atas modul utama masing-masing (
 
 | No | Nama Mahasiswa | NIM | Tanggung Jawab Modul | Detail Fitur Utama |
 |----|----------------|-----|----------------------|--------------------|
-| 1  | **Rofiq Muallif** | [Isi NIM] | **Modul Anggota** | CRUD Data Anggota, Fitur Pencarian (*Search*), dan Implementasi *Inheritance* (`Anggota extends BaseEntity`). |
-| 2  | **Caca** | [Isi NIM] | **Modul Produk** | CRUD Paket Simpanan, Layanan, atau Barang Koperasi, serta Fitur Pencarian Produk. |
-| 3  | **Hasan** | [Isi NIM] | **Modul Simpan Pinjam** | Pengelolaan Data Setoran Simpanan, Pengajuan Pinjaman, Mutasi Array/List Saldo. |
-| 4  | **Akira** | [Isi NIM] | **Modul Transaksi** | Pencatatan Jurnal Transaksi Kasir, Filter Tanggal, dan Integrasi Cetak PDF. |
+| 1  | **Rofiq Muallif** | 242520020 | **Modul Anggota** | CRUD Data Anggota, Fitur Pencarian (*Search*), dan Implementasi *Inheritance* (`Anggota extends BaseEntity`). |
+| 2  | **CHAERANI NUR AZIZAH** | 242520034 | **Modul Produk** | CRUD Paket Simpanan, Layanan, atau Barang Koperasi, serta Fitur Pencarian Produk. |
+| 3  | **WAHID IBNU HASAN** | 242520037 | **Modul Simpan Pinjam** | Pengelolaan Data Setoran Simpanan, Pengajuan Pinjaman, Mutasi Array/List Saldo. |
+| 4  | **AKIRA ARNOVYA AVANZA** | 242520021 | **Modul Transaksi** | Pencatatan Jurnal Transaksi Kasir, Filter Tanggal, dan Integrasi Cetak PDF. |
 
 ---
 
@@ -49,7 +49,7 @@ Bagi Dosen atau Asisten Laboratorium yang ingin menguji aplikasi ini, mohon ikut
 
 ### 1. Konfigurasi Database (MySQL)
 1. Aktifkan XAMPP (Apache & MySQL).
-2. Buat database baru bernama: `db_koperasi`.
+2. Buat database baru bernama: `koperasi_merah_putih`.
 3. Import file database yang berada di dalam folder proyek: `/src/database/` (jalankan query DDL yang disediakan).
 
 ### 2. Informasi Akun untuk Pengujian (Testing)
