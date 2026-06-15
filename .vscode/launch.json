@@ -1,0 +1,45 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "AnggotaView",
+      "request": "launch",
+      "mainClass": "view.AnggotaView",
+      "projectName": "BIG PROJECT_fc9d5e4b"
+    },
+    {
+      "type": "java",
+      "name": "TestTransaksi",
+      "request": "launch",
+      "mainClass": "test.TestTransaksi",
+      "projectName": "BIG PROJECT_fc9d5e4b"
+    },
+    {
+      "type": "java",
+      "name": "TestAnggota",
+      "request": "launch",
+      "mainClass": "test.TestAnggota",
+      "projectName": "BIG PROJECT_fc9d5e4b"
+    },
+    {
+      "type": "java",
+      "name": "App",
+      "request": "launch",
+      "mainClass": "app.App",
+      "projectName": "BIG PROJECT_fc9d5e4b"
+    },
+    {
+      "type": "java",
+      "name": "Run Koperasi Merah Putih",
+      "request": "launch",
+      "mainClass": "app.Launcher",
+      "vmArgs": "--module-path \"C:/Users/Rofiq Muallif/OneDrive/Documents/KoperasiMerahPutiih/BIG PROJECT/javafx-sdk/lib\" --add-modules javafx.controls,javafx.fxml",
+      "classPaths": [
+        "${workspaceFolder}/bin",
+        "C:/Users/Rofiq Muallif/OneDrive/Documents/KoperasiMerahPutiih/BIG PROJECT/lib/mysql-connector-j-9.7.0.jar",
+        "C:/Users/Rofiq Muallif/OneDrive/Documents/KoperasiMerahPutiih/BIG PROJECT/lib/itextpdf-5.5.13.3.jar"
+      ]
+    }
+  ]
+}
