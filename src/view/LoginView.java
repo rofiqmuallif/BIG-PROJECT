@@ -1,7 +1,7 @@
 package view;
 
-import dao.UserDAO;
-import model.User;
+import dao.UserDAO; // DAO untuk autentikasi
+import model.User; // Model User
 import javafx.application.Application;
 import javafx.geometry.*;
 import javafx.scene.Scene;
@@ -10,6 +10,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+// Tampilan login sederhana. Mengambil username dan password, lalu memanggil UserDAO.login().
 public class LoginView extends Application {
 
     private UserDAO userDAO = new UserDAO();
@@ -51,30 +52,35 @@ public class LoginView extends Application {
 
         // ── AKSI LOGIN ──
         btnLogin.setOnAction(e -> {
+            // Ambil input dari form
             String username = tfUsername.getText().trim();
             String password = pfPassword.getText().trim();
 
+            // Validasi sederhana: jangan proses jika kosong
             if (username.isEmpty() || password.isEmpty()) {
                 showAlert("Username dan password wajib diisi!");
                 return;
             }
 
             try {
+                // Memanggil method login di UserDAO
                 User user = userDAO.login(username, password);
                 if (user != null) {
+                    // Jika login sukses, tampilkan pesan dan buka DashboardView
                     showAlert("Selamat datang, " + user.getUsername() + "! (" + user.getRole() + ")");
-                    // Nanti di sini pindah ke DashboardView
                     stage.close();
                     new DashboardView(user.getUsername(), user.getRole()).start(new Stage());
                 } else {
+                    // Jika tidak ditemukan, beri tahu user
                     showAlert("Username atau password salah!");
                 }
             } catch (Exception ex) {
+                // Tangani error koneksi/SQL
                 showAlert("Error: " + ex.getMessage());
             }
         });
 
-        // BARU
+        // Tombol untuk membuka form registrasi
         btnKeRegister.setOnAction(e -> {
             new RegisterView().start(new Stage());
         });
@@ -100,6 +106,7 @@ public class LoginView extends Application {
         stage.show();
     }
 
+    // Menampilkan dialog informasi singkat.
     private void showAlert(String pesan) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Info");

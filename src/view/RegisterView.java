@@ -1,6 +1,6 @@
 package view;
 
-import dao.UserDAO;
+import dao.UserDAO; // DAO untuk operasi users
 import javafx.geometry.*;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -8,6 +8,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+// Tampilan registrasi: menerima username/password/role lalu memanggil UserDAO.registrasi().
 public class RegisterView {
 
     private UserDAO userDAO = new UserDAO();
@@ -51,11 +52,13 @@ public class RegisterView {
 
         // ── AKSI DAFTAR ──
         btnDaftar.setOnAction(e -> {
+            // Ambil input
             String username = tfUsername.getText().trim();
             String password = pfPassword.getText().trim();
             String konfirmasi = pfKonfirmasi.getText().trim();
             String role = cbRole.getValue();
 
+            // Validasi input sederhana sebelum kirim ke DAO
             if (username.isEmpty() || password.isEmpty()) {
                 showAlert("Semua field wajib diisi!");
                 return;
@@ -70,10 +73,12 @@ public class RegisterView {
             }
 
             try {
+                // Cek apakah username sudah digunakan
                 if (userDAO.usernameAda(username)) {
                     showAlert("Username sudah dipakai, pilih yang lain!");
                     return;
                 }
+                // Panggil DAO untuk menyimpan data user baru
                 if (userDAO.registrasi(username, password, role)) {
                     showAlert("Registrasi berhasil! Silahkan login.");
                     stage.close();
@@ -83,6 +88,7 @@ public class RegisterView {
             }
         });
 
+        // Tombol kembali hanya menutup jendela registrasi.
         btnKembali.setOnAction(e -> stage.close());
 
         // ── LAYOUT ──
