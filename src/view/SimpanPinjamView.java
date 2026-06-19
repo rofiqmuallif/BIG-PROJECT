@@ -17,6 +17,8 @@ public class SimpanPinjamView extends Application {
 
     private SimpananDAO simpananDAO = new SimpananDAO();
     private PinjamanDAO pinjamanDAO = new PinjamanDAO();
+    private int selectedSimpananId = -1;
+    private int selectedPinjamanId = -1;
 
     @Override
     public void start(Stage stage) {
@@ -28,8 +30,23 @@ public class SimpanPinjamView extends Application {
 
         tabPane.getTabs().addAll(tabSimpanan, tabPinjaman);
 
-        VBox root = new VBox(10, tabPane);
-        Scene scene = new Scene(root, 800, 650);
+        Button btnKembali = new Button("Kembali");
+        btnKembali.setStyle(
+                "-fx-background-color: rgba(111, 190, 255, 0.87); -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
+        btnKembali.setOnAction(e -> {
+            stage.close();
+        });
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        HBox topBar = new HBox(spacer, btnKembali);
+        topBar.setPadding(new Insets(10, 10, 0, 10));
+
+        VBox root = new VBox(10, topBar, tabPane);
+        VBox.setVgrow(tabPane, Priority.ALWAYS);
+
+        Scene scene = new Scene(root, 900, 680);
         stage.setTitle("Modul Simpan Pinjam - Koperasi Merah Putih");
         stage.setScene(scene);
         stage.show();
@@ -59,7 +76,7 @@ public class SimpanPinjamView extends Application {
 
         TextField tfIdAnggota = new TextField();
         ComboBox<String> cbJenis = new ComboBox<>();
-        cbJenis.getItems().addAll("pokok", "wajib", "sukarela"); // Sesuai DB Enum
+        cbJenis.getItems().addAll("wajib", "sukarela"); // Sesuai DB Enum
         cbJenis.setValue("wajib");
         TextField tfJumlah = new TextField();
         TextField tfKet = new TextField();
@@ -78,15 +95,48 @@ public class SimpanPinjamView extends Application {
         form.add(tfKet, 1, 3);
 
         Button btnTambah = new Button("Tambah");
-        Button btnMuat = new Button("Refresh Data");
-        HBox tombol = new HBox(10, btnTambah, btnMuat);
-        tombol.setPadding(new Insets(10));
+        Button btnRefresh = new Button("Refresh Data");
+        Button btnUpdate = new Button("Update Data");
+        Button btnDelete = new Button("Delete Data");
+        HBox tombol = new HBox(15, btnTambah, btnRefresh, btnUpdate, btnDelete);
+        tombol.setPadding(new Insets(15));
+        btnDelete.setStyle("-fx-background-color: #d9534f; -fx-text-fill: white;");
 
-        btnMuat.setOnAction(e -> {
+        Runnable loadSimpanan = () -> {
             try {
                 dataList.setAll(simpananDAO.getAll());
+                selectedSimpananId = -1;
+                tfIdAnggota.clear();
+                tfJumlah.clear();
+                tfKet.clear();
             } catch (Exception ex) {
                 ex.printStackTrace();
+            }
+        };
+        btnRefresh.setOnAction(e -> loadSimpanan.run());
+
+        table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                selectedSimpananId = newSelection.getId();
+                tfIdAnggota.setText(String.valueOf(newSelection.getIdAnggota()));
+                cbJenis.setValue(newSelection.getJenisSimpanan());
+                tfJumlah.setText(String.valueOf(newSelection.getJumlah()));
+                tfKet.setText(newSelection.getKeterangan());
+            }
+        });
+
+        btnUpdate.setOnAction(e -> {
+            if (selectedSimpananId == -1) {
+                showAlert("Pilih data di tabel terlebih dahulu!");
+                return;
+            }
+            try {
+                Simpanan s = new Simpanan(selectedSimpananId, Integer.parseInt(tfIdAnggota.getText()),
+                        cbJenis.getValue(), Double.parseDouble(tfJumlah.getText()), "", tfKet.getText());
+                simpananDAO.update(s);
+                loadSimpanan.run();
+            } catch (Exception ex) {
+                showAlert("Gagal mengupdate data!");
             }
         });
 
@@ -96,14 +146,27 @@ public class SimpanPinjamView extends Application {
                         cbJenis.getValue(), Double.parseDouble(tfJumlah.getText()),
                         java.time.LocalDate.now().toString(), tfKet.getText());
                 simpananDAO.tambah(s);
-                btnMuat.fire();
+                btnRefresh.fire();
             } catch (Exception ex) {
                 Alert a = new Alert(Alert.AlertType.ERROR, "Cek input data simpanan!");
                 a.show();
             }
         });
 
-        btnMuat.fire();
+        btnDelete.setOnAction(e -> {
+            if (selectedSimpananId == -1) {
+                showAlert("Pilih data di tabel yang inggin di hapus");
+                return;
+            }
+            try {
+                simpananDAO.hapus(selectedSimpananId);
+                loadSimpanan.run();
+            } catch (Exception ex) {
+                showAlert("Gagal menghapus data");
+            }
+        });
+
+        btnRefresh.fire();
         return new VBox(15, table, form, tombol);
     }
 
@@ -134,59 +197,129 @@ public class SimpanPinjamView extends Application {
                 colTanggal);
         table.setItems(dataList);
 
-        TextField tfKode = new TextField();
         TextField tfIdAnggota = new TextField();
         TextField tfJmlPinjam = new TextField();
         TextField tfCicilan = new TextField();
         ComboBox<String> cbStatus = new ComboBox<>();
         cbStatus.getItems().addAll("aktif", "lunas"); // Sesuai DB Enum
         cbStatus.setValue("aktif");
+        TextField tfBayar = new TextField();
+        tfBayar.setPromptText("Masukan nominal bayar");
 
         GridPane form = new GridPane();
         form.setHgap(10);
         form.setVgap(8);
         form.setPadding(new Insets(10));
-        form.add(new Label("Kode Pinjaman"), 0, 0);
-        form.add(tfKode, 1, 0);
-        form.add(new Label("ID Anggota"), 0, 1);
-        form.add(tfIdAnggota, 1, 1);
-        form.add(new Label("Jumlah Pinjam (Rp)"), 0, 2);
-        form.add(tfJmlPinjam, 1, 2);
-        form.add(new Label("Cicilan per Bulan (Rp)"), 0, 3);
-        form.add(tfCicilan, 1, 3);
-        form.add(new Label("Status"), 0, 4);
-        form.add(cbStatus, 1, 4);
+        form.add(new Label("ID Anggota"), 0, 0);
+        form.add(tfIdAnggota, 1, 0);
+        form.add(new Label("Jumlah Pinjam (Rp)"), 0, 1);
+        form.add(tfJmlPinjam, 1, 1);
+        form.add(new Label("Cicilan per Bulan (Rp)"), 0, 2);
+        form.add(tfCicilan, 1, 2);
+        form.add(new Label("Status"), 0, 3);
+        form.add(cbStatus, 1, 3);
+        form.add(new Label("Nominal Bayar Cicilan"), 0, 4);
+        form.add(tfBayar, 1, 4);
 
         Button btnTambah = new Button("Tambah Pinjaman");
-        Button btnMuat = new Button("Refresh Data");
-        HBox tombol = new HBox(10, btnTambah, btnMuat);
+        Button btnRefres = new Button("Refresh Data");
+        Button btnBayar = new Button("Bayar Setoran");
+        Button btnUpdate = new Button("Update Status");
+        Button btnDelete = new Button("Delete Pinjaman");
+        btnDelete.setStyle("-fx-background-color: #d9534f; -fx-text-fill: white;");
+        btnBayar.setStyle("-fx-background-color: #5cb85c; -fx-text-fill: white;");
+
+        HBox tombol = new HBox(10, btnTambah, btnRefres, btnBayar, btnUpdate, btnDelete);
         tombol.setPadding(new Insets(10));
 
-        btnMuat.setOnAction(e -> {
+        Runnable LoadPinjaman = () -> {
             try {
                 dataList.setAll(pinjamanDAO.getAll());
+                selectedPinjamanId = -1;
+                tfIdAnggota.clear();
+                tfJmlPinjam.clear();
+                tfCicilan.clear();
+                tfBayar.clear();
             } catch (Exception ex) {
                 ex.printStackTrace();
+            }
+        };
+        btnRefres.setOnAction(e -> LoadPinjaman.run());
+
+        table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                selectedPinjamanId = newSelection.getId();
+                tfIdAnggota.setText(String.valueOf(newSelection.getIdAnggota()));
+                tfJmlPinjam.setText(String.valueOf(newSelection.getJumlahPinjam()));
+                tfCicilan.setText(String.valueOf(newSelection.getCicilanPerBulan()));
+                cbStatus.setValue(newSelection.getStatus());
             }
         });
 
         btnTambah.setOnAction(e -> {
             try {
-                // Asumsi jumlah bayar awal adalah 0
-                Pinjaman p = new Pinjaman(0, tfKode.getText(), Integer.parseInt(tfIdAnggota.getText()),
+                String kodeOtomatis = pinjamanDAO.generateKodePinjaman();
+                Pinjaman p = new Pinjaman(0, kodeOtomatis, Integer.parseInt(tfIdAnggota.getText()),
                         Double.parseDouble(tfJmlPinjam.getText()), 0.0,
                         Double.parseDouble(tfCicilan.getText()), cbStatus.getValue(),
                         java.time.LocalDate.now().toString());
                 pinjamanDAO.tambah(p);
-                btnMuat.fire();
+                LoadPinjaman.run();
             } catch (Exception ex) {
-                Alert a = new Alert(Alert.AlertType.ERROR, "Cek input data pinjaman!");
-                a.show();
+                showAlert("Gagal menambah pinjaman!");
             }
         });
 
-        btnMuat.fire();
+        btnBayar.setOnAction(e -> {
+            if (selectedPinjamanId == -1) {
+                showAlert("Pilih data pinjaman di tabel yang inggin di bayar!");
+                return;
+            }
+            try {
+                double nominalBayar = Double.parseDouble(tfBayar.getText());
+                pinjamanDAO.bayarCicilan(selectedPinjamanId, nominalBayar);
+                LoadPinjaman.run();
+            } catch (Exception ex) {
+                showAlert("Masukan nominal angka pembayaran");
+            }
+        });
+
+        btnUpdate.setOnAction(e -> {
+            if (selectedPinjamanId == -1) {
+                showAlert("Pilih Data pinjaman di tabel terlebih dahulu!");
+                return;
+            }
+            try {
+                pinjamanDAO.updateStatus(selectedPinjamanId, cbStatus.getValue());
+                LoadPinjaman.run();
+            } catch (Exception ex) {
+                showAlert("Gagal merubah status!");
+            }
+        });
+
+        btnDelete.setOnAction(e -> {
+            if (selectedPinjamanId == -1) {
+                showAlert("Pilih data pinjaman yang inggin di hapus");
+                return;
+            }
+            try {
+                pinjamanDAO.hapus(selectedPinjamanId);
+                LoadPinjaman.run();
+            } catch (Exception ex) {
+                showAlert("gagal menghapus data pinjaman");
+            }
+        });
+
+        btnRefres.fire();
         return new VBox(15, table, form, tombol);
+    }
+
+    private void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Informasi");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     public static void main(String[] args) {
