@@ -55,13 +55,13 @@ public class DashboardView {
         header.setStyle("-fx-background-color: #b71c1c;");
 
         // ── MENU CARDS ──
-        Button btnAnggota = buatCard("👤", "Modul Anggota",
+        Button btnAnggota = buatCard("👤", "Kelola Anggota",
                 "Kelola data anggota koperasi", "#1565C0");
-        Button btnProduk = buatCard("📦", "Modul Produk & Stok",
+        Button btnProduk = buatCard("📦", "Kelola Produk & Stok",
                 "Kelola produk dan stok barang", "#2E7D32");
-        Button btnTransaksi = buatCard("💳", "Modul Transaksi",
+        Button btnTransaksi = buatCard("💳", "Kelola Transaksi",
                 "Catat transaksi pembelian", "#E65100");
-        Button btnSimpanPinjam = buatCard("🏦", "Modul Simpan Pinjam",
+        Button btnSimpanPinjam = buatCard("🏦", "Kelola Simpan Pinjam",
                 "Kelola simpanan dan pinjaman", "#6A1B9A");
 
         // ── AKSI MENU ──
@@ -74,13 +74,7 @@ public class DashboardView {
             }
         });
 
-        // Produk, Transaksi, SimpanPinjam disambung nanti
-        // setelah teman-teman selesai
         
-
-
-
-        // BARU
         btnProduk.setOnAction(e -> {
             try {
                 stage.close();
@@ -107,9 +101,6 @@ public class DashboardView {
                 ex.printStackTrace();
             }
         });
-
-
-
 
 
         // ── GRID MENU ──
