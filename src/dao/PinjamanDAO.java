@@ -57,4 +57,10 @@ public class PinjamanDAO {
         ps.setInt(1, id);
         return ps.executeUpdate() > 0;
     }
+
+    public String generateKodePinjaman() {
+        // TODO Auto-generated method stub
+        
+        throw new UnsupportedOperationException("Unimplemented method 'generateKodePinjaman'");
+    }
 }
