@@ -1,4 +1,4 @@
-package view;
+ package view;
 
 import dao.ProdukDAO;
 import model.Produk;
@@ -10,7 +10,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.*;
-
 import java.util.Optional;
 
 public class ProdukView extends Application {
@@ -18,6 +17,10 @@ public class ProdukView extends Application {
     private ProdukDAO produkDAO = new ProdukDAO();
     private ObservableList<Produk> produkList = FXCollections.observableArrayList();
     private TableView<Produk> table = new TableView<>();
+
+    // Session Data (Mengikuti pola AnggotaView yang benar)
+    private String username;
+    private String role;
 
     // Form fields
     private TextField txtKode   = new TextField();
@@ -27,13 +30,24 @@ public class ProdukView extends Application {
     private TextField txtSatuan = new TextField();
     private TextField txtCari   = new TextField();
 
-    private Button btnTambah = new Button("+ Tambah");
-    private Button btnUpdate = new Button("Edit Update");
-    private Button btnHapus  = new Button("Hapus");
-    private Button btnBersih = new Button("Bersihkan");
-    private Label  lblStatus = new Label("Selamat datang!");
+    private Button btnTambah  = new Button("+ Tambah");
+    private Button btnUpdate  = new Button("Edit Update");
+    private Button btnHapus   = new Button("🗑 Hapus");
+    private Button btnBersih  = new Button("Bersihkan");
+    private Button btnKembali = new Button("Kembali"); // Text diubah menjadi "Kembali" tanpa panah
+    private Label  lblStatus  = new Label("Selamat datang!");
 
     private Produk selectedProduk = null;
+
+    // Constructor (Sama seperti AnggotaView)
+    public ProdukView() {
+        this("", "");
+    }
+
+    public ProdukView(String username, String role) {
+        this.username = username;
+        this.role = role;
+    }
 
     @Override
     public void start(Stage stage) {
@@ -48,10 +62,10 @@ public class ProdukView extends Application {
 
         loadData();
 
-        Scene scene = new Scene(root, 1000, 620);
+        Scene scene = new Scene(root, 1000, 680);
         stage.setScene(scene);
         stage.setMinWidth(900);
-        stage.setMinHeight(560);
+        stage.setMinHeight(640);
         stage.show();
     }
 
@@ -61,13 +75,37 @@ public class ProdukView extends Application {
         header.setAlignment(Pos.CENTER_LEFT);
         header.setStyle("-fx-background-color: #C0392B;");
 
+        // Bagian Kiri: Judul Modul
         VBox titles = new VBox(2);
-        Label title = new Label("Manajemen Produk");
+        Label title = new Label("MODUL PRODUK - Koperasi Merah Putih");
         title.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;");
         Label sub = new Label("Koperasi Merah Putih");
         sub.setStyle("-fx-font-size: 12px; -fx-text-fill: #FFCDD2;");
         titles.getChildren().addAll(title, sub);
-        header.getChildren().add(titles);
+
+        // Bagian Tengah: Spacer otomatis untuk mendorong tombol ke ujung kanan
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        // Bagian Kanan: Desain Tombol Kembali Baru (Warna Biru seperti Modul Anggota)
+        btnKembali.setStyle("-fx-background-color: #1A73E8; -fx-text-fill: white; -fx-font-weight: bold; "
+                + "-fx-background-radius: 6; -fx-cursor: hand; -fx-padding: 8 20;");
+        btnKembali.setMaxWidth(Button.USE_COMPUTED_SIZE);
+
+        // Logika Aksi Tombol Kembali ke DashboardView
+        btnKembali.setOnAction(e -> {
+            try {
+                DashboardView dashboard = new DashboardView(username, role);
+                Stage mainStage = new Stage();
+                dashboard.start(mainStage);
+                
+                ((Stage) btnKembali.getScene().getWindow()).close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        header.getChildren().addAll(titles, spacer, btnKembali);
         return header;
     }
 
@@ -76,14 +114,22 @@ public class ProdukView extends Application {
         center.setPadding(new Insets(16));
 
         VBox tableSection = buildTableSection();
-        VBox formSection  = buildFormSection();
+        VBox formContent  = buildFormSection();
+
+        ScrollPane formScroll = new ScrollPane(formContent);
+        formScroll.setFitToWidth(true);
+        formScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        formScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        formScroll.setPrefWidth(270);
+        formScroll.setMinWidth(250);
+        formScroll.setStyle("-fx-background: transparent; -fx-background-color: transparent; -fx-border-color: transparent;");
 
         HBox.setHgrow(tableSection, Priority.ALWAYS);
-        center.getChildren().addAll(tableSection, formSection);
+        center.getChildren().addAll(tableSection, formScroll);
         return center;
     }
 
-    @SuppressWarnings({"unchecked", "deprecation"})
+    @SuppressWarnings("unchecked")
     private VBox buildTableSection() {
         VBox box = new VBox(10);
 
@@ -156,10 +202,10 @@ public class ProdukView extends Application {
     }
 
     private VBox buildFormSection() {
-        VBox box = new VBox(10);
+        VBox box = new VBox(8);
         box.setPrefWidth(260);
         box.setMinWidth(240);
-        box.setPadding(new Insets(16));
+        box.setPadding(new Insets(12));
         box.setStyle("-fx-background-color: white; -fx-border-color: #E0E0E0; "
                 + "-fx-border-radius: 10; -fx-background-radius: 10;");
 
@@ -182,6 +228,7 @@ public class ProdukView extends Application {
         btnHapus.setStyle(btnDangerStyle());
         btnBersih.setStyle(btnSecStyle());
 
+        // btnKembali dihilangkan dari pengaturan lebar form bawah
         for (Button b : new Button[]{btnTambah, btnUpdate, btnHapus, btnBersih}) {
             b.setMaxWidth(Double.MAX_VALUE);
         }
@@ -251,13 +298,20 @@ public class ProdukView extends Application {
 
     private void hapusProduk() {
         if (selectedProduk == null) { showAlert(Alert.AlertType.WARNING, "Pilih produk di tabel dulu!"); return; }
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
-                "Hapus " + selectedProduk.getNamaProduk() + "?", ButtonType.OK, ButtonType.CANCEL);
-        confirm.setHeaderText(null);
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Konfirmasi Hapus");
+        confirm.setHeaderText("Hapus Produk");
+        confirm.setContentText("Yakin ingin menghapus produk:\n\""
+                + selectedProduk.getNamaProduk() + "\" (" + selectedProduk.getKodeProduk() + ")?\n\nData tidak bisa dikembalikan!");
         Optional<ButtonType> r = confirm.showAndWait();
         if (r.isPresent() && r.get() == ButtonType.OK) {
-            if (produkDAO.hapusProduk(selectedProduk.getId())) { loadData(); bersihkanForm(); setStatus("Produk berhasil dihapus!"); }
-            else showAlert(Alert.AlertType.ERROR, "Gagal hapus produk.");
+            if (produkDAO.hapusProduk(selectedProduk.getId())) {
+                setStatus("Produk \"" + selectedProduk.getNamaProduk() + "\" berhasil dihapus.");
+                loadData();
+                bersihkanForm();
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Gagal hapus produk.");
+            }
         }
     }
 
@@ -328,7 +382,7 @@ public class ProdukView extends Application {
                 + "-fx-background-radius: 6; -fx-cursor: hand; -fx-padding: 8 0;";
     }
     private String btnDangerStyle() {
-        return "-fx-background-color: #7F8C8D; -fx-text-fill: white; -fx-font-weight: bold; "
+        return "-fx-background-color: #E53935; -fx-text-fill: white; -fx-font-weight: bold; "
                 + "-fx-background-radius: 6; -fx-cursor: hand; -fx-padding: 8 0;";
     }
     private String btnSecStyle() {

@@ -6,6 +6,8 @@ import model.Transaksi;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -21,6 +23,10 @@ public class TransaksiView extends Application {
     private TableView<Transaksi> table = new TableView<>();
     private ObservableList<Transaksi> dataList = FXCollections.observableArrayList();
 
+    // Komponen Pencarian & Kembali
+    private TextField txtCari = new TextField();
+    private Button btnKembali = new Button("⬅ Kembali");
+
     // Form fields
     private TextField txtKode       = new TextField();
     private TextField txtIdAnggota  = new TextField();
@@ -35,6 +41,15 @@ public class TransaksiView extends Application {
     @Override
     public void start(Stage stage) {
         stage.setTitle("Manajemen Transaksi - Koperasi Merah Putih");
+
+        // ===== BAR ATAS (TOMBOL KEMBALI DI ATAS KANAN) =====
+        // Mengubah warna background menjadi biru (#2196F3) dan teks putih
+        btnKembali.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-min-width: 90px;");
+        
+        // Menggunakan SpacerRegion agar tombol terdorong otomatis ke arah kanan
+        HBox topBarBox = new HBox(10, new SpacerRegion(), btnKembali);
+        topBarBox.setPadding(new Insets(10, 15, 0, 15));
+        topBarBox.setStyle("-fx-alignment: center-right;");
 
         // ===== FORM =====
         Label lblTitle = new Label("Form Transaksi");
@@ -72,6 +87,14 @@ public class TransaksiView extends Application {
         HBox btnBox = new HBox(10, btnTambah, btnUpdate, btnHapus, btnClear);
         btnBox.setPadding(new Insets(5, 10, 5, 10));
 
+        // ===== BAR PENCARIAN =====
+        txtCari.setPromptText("Cari berdasarkan Kode / ID Anggota...");
+        txtCari.setPrefWidth(250);
+
+        HBox searchBarBox = new HBox(10, new Label("Cari Transaksi:"), txtCari);
+        searchBarBox.setPadding(new Insets(5, 10, 5, 10));
+        searchBarBox.setStyle("-fx-alignment: center-left;");
+
         // ===== TABLE =====
         TableColumn<Transaksi, Integer> colId    = col("ID", "id", 50);
         TableColumn<Transaksi, String>  colKode  = col("Kode", "kodeTransaksi", 100);
@@ -88,7 +111,8 @@ public class TransaksiView extends Application {
         table.getColumns().add(colJml);
         table.getColumns().add(colTotal);
         table.getColumns().add(colTgl);
-        table.setItems(dataList);
+        
+        initSearchFilter();
         table.setPrefHeight(300);
 
         // ===== EVENT HANDLERS =====
@@ -96,23 +120,64 @@ public class TransaksiView extends Application {
         btnUpdate.setOnAction(e -> handleUpdate());
         btnHapus.setOnAction(e -> handleHapus());
         btnClear.setOnAction(e -> clearForm());
+        btnKembali.setOnAction(e -> handleKembali(stage));
 
         table.getSelectionModel().selectedItemProperty().addListener((obs, old, sel) -> {
             if (sel != null) { selectedTransaksi = sel; populateForm(sel); }
         });
 
-        // ===== LAYOUT =====
+        // ===== LAYOUT UTAMA =====
         VBox formBox = new VBox(10, lblTitle, form, btnBox, lblStatus);
-        formBox.setPadding(new Insets(15));
+        formBox.setPadding(new Insets(10, 15, 15, 15));
 
-        VBox root = new VBox(10, formBox, new Separator(), table);
+        // Letakkan topBarBox paling pertama di dalam root VBox
+        VBox root = new VBox(10, topBarBox, formBox, new Separator(), searchBarBox, table);
         root.setPadding(new Insets(10));
 
         loadData();
 
-        Scene scene = new Scene(root, 750, 650);
+        Scene scene = new Scene(root, 750, 720);
         stage.setScene(scene);
         stage.show();
+    }
+
+    private void initSearchFilter() {
+        FilteredList<Transaksi> filteredData = new FilteredList<>(dataList, p -> true);
+
+        txtCari.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(transaksi -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+
+                String lowerCaseFilter = newValue.toLowerCase().trim();
+
+                if (transaksi.getKodeTransaksi() != null && 
+                    transaksi.getKodeTransaksi().toLowerCase().contains(lowerCaseFilter)) {
+                    return true; 
+                }
+                if (String.valueOf(transaksi.getIdAnggota()).contains(lowerCaseFilter)) {
+                    return true;
+                }
+
+                return false;
+            });
+        });
+
+        SortedList<Transaksi> sortedData = new SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(table.comparatorProperty());
+        table.setItems(sortedData);
+    }
+
+    private void handleKembali(Stage currentStage) {
+        currentStage.close();
+        try {
+            AnggotaView anggotaView = new AnggotaView();
+            Stage newStage = new Stage();
+            anggotaView.start(newStage);
+        } catch (Exception ex) {
+            System.out.println("Gagal membuka halaman sebelumnya: " + ex.getMessage());
+        }
     }
 
     private void handleTambah() {
@@ -189,6 +254,7 @@ public class TransaksiView extends Application {
         txtKode.clear(); txtIdAnggota.clear(); txtIdProduk.clear();
         txtJumlah.clear(); txtTotalHarga.clear();
         dpTanggal.setValue(LocalDate.now());
+        txtCari.clear();
         selectedTransaksi = null;
         table.getSelectionModel().clearSelection();
         lblStatus.setText("");
@@ -201,7 +267,6 @@ public class TransaksiView extends Application {
         lblStatus.setStyle("-fx-text-fill: " + color + ";");
     }
 
-    // Helper buat kolom TableView biar singkat
     private <S, T> TableColumn<S, T> col(String title, String prop, double width) {
         TableColumn<S, T> c = new TableColumn<>(title);
         c.setCellValueFactory(new PropertyValueFactory<>(prop));
@@ -210,4 +275,11 @@ public class TransaksiView extends Application {
     }
 
     public static void main(String[] args) { launch(args); }
+
+    // Komponen pembantu untuk meratakan komponen ke kanan di dalam HBox
+    private static class SpacerRegion extends Region {
+        public SpacerRegion() {
+            HBox.setHgrow(this, Priority.ALWAYS);
+        }
+    }
 }
