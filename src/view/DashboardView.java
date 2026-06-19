@@ -67,6 +67,7 @@ public class DashboardView {
         // ── AKSI MENU ──
         btnAnggota.setOnAction(e -> {
             try {
+                stage.close();
                 new AnggotaView(username, role).start(new Stage());
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -82,6 +83,7 @@ public class DashboardView {
         // BARU
         btnProduk.setOnAction(e -> {
             try {
+                stage.close();
                 new ProdukView().start(new Stage());
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -90,6 +92,7 @@ public class DashboardView {
 
         btnTransaksi.setOnAction(e -> {
             try {
+                stage.close();
                 new TransaksiView().start(new Stage());
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -98,6 +101,7 @@ public class DashboardView {
 
         btnSimpanPinjam.setOnAction(e -> {
             try {
+                stage.close();
                 new SimpanPinjamView().start(new Stage());
             } catch (Exception ex) {
                 ex.printStackTrace();
