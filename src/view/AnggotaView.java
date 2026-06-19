@@ -183,12 +183,9 @@ public class AnggotaView extends Application {
         Button btnClear = new Button("Clear");
         Button btnExportPdf = new Button("Export PDF");
 
-        // Style tombol agar mudah dibedakan warnanya.
-        btnTambah.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
-        btnUpdate.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white;");
+        // Style tombol: hanya Delete dan Back yang punya warna khusus.
+        // Tombol lainnya pakai warna default sistem.
         btnHapus.setStyle("-fx-background-color: #f44336; -fx-text-fill: white;");
-        btnClear.setStyle("-fx-background-color: #9E9E9E; -fx-text-fill: white;");
-        btnExportPdf.setStyle("-fx-background-color: #b91c1c; -fx-text-fill: white;");
 
         // HBox untuk menyusun tombol-tombol aksi secara horizontal.
         HBox tombol = new HBox(10, btnTambah, btnUpdate, btnHapus, btnClear, btnExportPdf);
