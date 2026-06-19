@@ -1,3 +1,6 @@
+//HUBUNGIN ANTARA APLIKASI JAVA DAN DATABASE BUAT TABEL ANGGOTA
+//DATA ACCESS OBJECT
+
 package dao;
 
 import database.DatabaseConnection;
@@ -7,7 +10,8 @@ import java.util.*;
 
 public class AnggotaDAO {
     private Connection conn = DatabaseConnection.getConnection();
-
+    
+    //* */ CRUD
     public boolean tambah(Anggota a) throws SQLException {
         String sql = "INSERT INTO anggota (nik, nama, alamat, no_hp, status, tanggal_daftar) VALUES (?,?,?,?,?,?)";
         PreparedStatement ps = conn.prepareStatement(sql);
