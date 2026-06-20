@@ -35,6 +35,23 @@ public class PinjamanDAO {
         return list;
     }
 
+    public List<Pinjaman> cari(String keyword) throws SQLException {
+        List<Pinjaman> List = new ArrayList<>();
+        String sql = "SELECT * FROM pinjaman WHERE kode_pinjam LIKE? OR id_anggota LIKE ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, "%" + keyword + "%");
+        ps.setString(2, "%" + keyword + "%");
+        ps.setString(3, "%" + keyword + "%");
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            List.add(new Pinjaman(
+                    rs.getInt("id"), rs.getString("kode_pinjam"), rs.getInt("id_anggota"),
+                    rs.getDouble("jumlah_pinjam"), rs.getDouble("jumlah_bayar"), rs.getDouble("cicilan_per_bulan"),
+                    rs.getString("status"), rs.getString("tanggal_pinjam")));
+        }
+        return List;
+    }
+
     public boolean bayarCicilan(int id, double bayarBaru) throws SQLException {
         String sql = "UPDATE pinjaman SET jumlah_bayar = jumlah_bayar + ? WHERE id=?";
         PreparedStatement ps = conn.prepareStatement(sql);
@@ -59,8 +76,7 @@ public class PinjamanDAO {
     }
 
     public String generateKodePinjaman() {
-        // TODO Auto-generated method stub
-        
+
         throw new UnsupportedOperationException("Unimplemented method 'generateKodePinjaman'");
     }
 }
