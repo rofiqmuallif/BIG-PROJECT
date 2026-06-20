@@ -32,6 +32,22 @@ public class SimpananDAO {
         return list;
     }
 
+    public List<Simpanan> cari(String keyword) throws SQLException {
+        List<Simpanan> List = new ArrayList<>();
+        String sql = "SELECT * FROM simpanan WHERE jenis_simpanan LIKE ? OR keterangan LIKE ? OR id_anggota LIKE?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, "%" + keyword + "%");
+        ps.setString(2, "%" + keyword + "%");
+        ps.setString(3, "%" + keyword + "%");
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            List.add(new Simpanan(
+                    rs.getInt("id"), rs.getInt("Id_anggota"), rs.getString("jenis_simpanan"), rs.getDouble("jumlah"),
+                    rs.getString("tanggal"), rs.getString("keterangan")));
+        }
+        return List;
+    }
+
     public boolean update(Simpanan s) throws SQLException {
         String sql = "UPDATE simpanan SET jenis_simpanan=?, jumlah=?, keterangan=? WHERE id=?";
         PreparedStatement ps = conn.prepareStatement(sql);
