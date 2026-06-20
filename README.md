@@ -12,7 +12,7 @@ Setiap anggota kelompok bertanggung jawab penuh atas modul utama masing-masing (
 |----|----------------|-----|----------------------|-----------------------------------------|
 | 1  | **Rofiq Muallif** | 242520020 | **Modul Anggota** | CRUD Data Anggota, Fitur Pencarian (*Search*), dan Implementasi *Inheritance* (`Anggota extends BaseEntity`). Mengelola tabel `anggota`. |
 | 2  | **CHAERANI NUR AZIZAH** | 242520034 | **Modul Produk** | CRUD Barang Koperasi (Sembako/Kebutuhan Utama), Stok Opname, dan Fitur Pencarian Produk. Mengelola tabel `produk`. |
-| 3  | **WAHID IBNU HASAN** | 242520037 | **Modul Simpan Pinjam** | Pengelolaan simpanan (Pokok, Wajib, Sukarela) serta Pengajuan & Pelunasan Cicilan Pinjaman. Mengelola tabel `simpanan` dan `pinjaman`. |
+| 3  | **WAHID IBNU HASAN** | 242520037 | **Modul Simpan Pinjam** | Pengelolaan simpanan (Wajib, Sukarela) serta Pengajuan & Pelunasan Cicilan Pinjaman. Mengelola tabel `simpanan` dan `pinjaman`. |
 | 4  | **AKIRA ARNOVYA AVANZA** | 242520021 | **Modul Transaksi** | Pencatatan Jurnal Transaksi Penjualan Produk Toko Koperasi kepada Anggota dan Integrasi Cetak Laporan PDF. Mengelola tabel `transaksi`. |
 
 ---
