@@ -20,6 +20,7 @@ public class SimpanPinjamView extends Application {
     private int selectedSimpananId = -1;
     private int selectedPinjamanId = -1;
 
+    // ini buat overede start method dari Application
     @Override
     public void start(Stage stage) {
         TabPane tabPane = new TabPane();
