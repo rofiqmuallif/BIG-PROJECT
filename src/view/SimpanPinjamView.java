@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class SimpanPinjamView extends Application {
@@ -19,8 +20,19 @@ public class SimpanPinjamView extends Application {
     private PinjamanDAO pinjamanDAO = new PinjamanDAO();
     private int selectedSimpananId = -1;
     private int selectedPinjamanId = -1;
+    private String username;
+    private String role;
 
-    // ini buat overede start method dari Application
+    public SimpanPinjamView(String username, String role) {
+        this.username = username;
+        this.role = role;
+    }
+
+    public SimpanPinjamView() {
+        this.username = "Admin";
+        this.role = "admin";
+    }
+
     @Override
     public void start(Stage stage) {
         TabPane tabPane = new TabPane();
@@ -36,6 +48,13 @@ public class SimpanPinjamView extends Application {
                 "-fx-background-color: rgba(111, 190, 255, 0.87); -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
         btnKembali.setOnAction(e -> {
             stage.close();
+            try {
+                new DashboardView("Admin", "admin").start(new Stage());
+            } catch (Exception ex) {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Gagal kembali ke Dashboard!");
+                alert.showAndWait();
+                ex.printStackTrace();
+            }
         });
 
         Region spacer = new Region();
@@ -74,6 +93,14 @@ public class SimpanPinjamView extends Application {
 
         table.getColumns().addAll(colId, colIdAnggota, colJenis, colJumlah, colTanggal, colKet);
         table.setItems(dataList);
+
+        TextField tfCari = new TextField();
+        tfCari.setPromptText("Cari jenis / keterangan / ID Anggota...");
+        tfCari.setPrefWidth(250);
+        Button btnCari = new Button("Cari");
+        HBox searchBox = new HBox(10, new Label("Pencarian"), tfCari, btnCari);
+        searchBox.setAlignment(Pos.CENTER_LEFT);
+        searchBox.setPadding(new Insets(5, 10, 5, 10));
 
         TextField tfIdAnggota = new TextField();
         ComboBox<String> cbJenis = new ComboBox<>();
@@ -115,6 +142,14 @@ public class SimpanPinjamView extends Application {
             }
         };
         btnRefresh.setOnAction(e -> loadSimpanan.run());
+
+        btnCari.setOnAction(e -> {
+            try {
+                dataList.setAll(simpananDAO.cari(tfCari.getText()));
+            } catch (Exception ex) {
+                showAlert("Gagal melakukan pencarian");
+            }
+        });
 
         table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
@@ -168,7 +203,7 @@ public class SimpanPinjamView extends Application {
         });
 
         btnRefresh.fire();
-        return new VBox(15, table, form, tombol);
+        return new VBox(15, searchBox, table, form, tombol);
     }
 
     // --- TAB PINJAMAN ---
@@ -179,7 +214,7 @@ public class SimpanPinjamView extends Application {
 
         TableColumn<Pinjaman, Integer> colId = new TableColumn<>("ID");
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
-        TableColumn<Pinjaman, String> colKode = new TableColumn<>("Kode");
+        TableColumn<Pinjaman, String> colKode = new TableColumn<>("Kode pinjaman");
         colKode.setCellValueFactory(new PropertyValueFactory<>("kodePinjaman"));
         TableColumn<Pinjaman, Integer> colIdAnggota = new TableColumn<>("ID Anggota");
         colIdAnggota.setCellValueFactory(new PropertyValueFactory<>("idAnggota"));
@@ -197,6 +232,15 @@ public class SimpanPinjamView extends Application {
         table.getColumns().addAll(colId, colKode, colIdAnggota, colJmlPinjam, colJmlBayar, colCicilan, colStatus,
                 colTanggal);
         table.setItems(dataList);
+
+        // --- UI PENCARIAN PINJAMAN ---
+        TextField tfCari = new TextField();
+        tfCari.setPromptText("Cari kode / status / ID Anggota...");
+        tfCari.setPrefWidth(250);
+        Button btnCari = new Button("Cari");
+        HBox searchBox = new HBox(10, new Label("Pencarian:"), tfCari, btnCari);
+        searchBox.setAlignment(Pos.CENTER_LEFT);
+        searchBox.setPadding(new Insets(5, 10, 5, 10));
 
         TextField tfIdAnggota = new TextField();
         TextField tfJmlPinjam = new TextField();
@@ -247,6 +291,14 @@ public class SimpanPinjamView extends Application {
         };
         btnRefres.setOnAction(e -> LoadPinjaman.run());
 
+        btnCari.setOnAction(e -> {
+            try {
+                dataList.setAll(pinjamanDAO.cari(tfCari.getText()));
+            } catch (Exception ex) {
+                showAlert("Gagal melakukan pencarian data pinjaman!");
+            }
+        });
+
         table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
                 selectedPinjamanId = newSelection.getId();
@@ -267,6 +319,8 @@ public class SimpanPinjamView extends Application {
                 pinjamanDAO.tambah(p);
                 LoadPinjaman.run();
             } catch (Exception ex) {
+                System.out.println("Gagal minjam" + ex.getMessage());
+                ex.printStackTrace();
                 showAlert("Gagal menambah pinjaman!");
             }
         });
@@ -312,7 +366,7 @@ public class SimpanPinjamView extends Application {
         });
 
         btnRefres.fire();
-        return new VBox(15, table, form, tombol);
+        return new VBox(15, searchBox, table, form, tombol);
     }
 
     private void showAlert(String message) {
