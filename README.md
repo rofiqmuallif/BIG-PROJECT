@@ -59,8 +59,8 @@ Tabel `users` telah dilengkapi dengan enkripsi teks biasa untuk kemudahan demo. 
   * Username: `admin`
   * Password: `admin123`
 * **Level Petugas:**
-  * Username: `hasan`
-  * Password: `123456`
+  * Username: `petugas`
+  * Password: `petugas123`
 
 ### 3. Library yang Digunakan (Dependencies)
 Pastikan library berikut sudah dimasukkan ke build path / dependencies proyek di IDE Anda:
