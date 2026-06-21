@@ -5,6 +5,8 @@ import model.Pinjaman;
 import java.sql.*;
 import java.util.*;
 
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
+
 public class PinjamanDAO {
     private Connection conn = DatabaseConnection.getConnection();
 
@@ -37,7 +39,7 @@ public class PinjamanDAO {
 
     public List<Pinjaman> cari(String keyword) throws SQLException {
         List<Pinjaman> List = new ArrayList<>();
-        String sql = "SELECT * FROM pinjaman WHERE kode_pinjam LIKE? OR id_anggota LIKE ?";
+        String sql = "SELECT * FROM pinjaman WHERE kode_pinjaman LIKE ? OR status LIKE ?  OR id_anggota LIKE ?";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, "%" + keyword + "%");
         ps.setString(2, "%" + keyword + "%");
@@ -45,7 +47,7 @@ public class PinjamanDAO {
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
             List.add(new Pinjaman(
-                    rs.getInt("id"), rs.getString("kode_pinjam"), rs.getInt("id_anggota"),
+                    rs.getInt("id"), rs.getString("kode_pinjaman"), rs.getInt("id_anggota"),
                     rs.getDouble("jumlah_pinjam"), rs.getDouble("jumlah_bayar"), rs.getDouble("cicilan_per_bulan"),
                     rs.getString("status"), rs.getString("tanggal_pinjam")));
         }
@@ -75,8 +77,23 @@ public class PinjamanDAO {
         return ps.executeUpdate() > 0;
     }
 
-    public String generateKodePinjaman() {
+    public String generateKodePinjaman() throws SQLException {
+        String sql = "SELECT kode_pinjaman FROM pinjaman ORDER BY id DESC LIMIT 1";
+        ResultSet rs = conn.createStatement().executeQuery(sql);
 
-        throw new UnsupportedOperationException("Unimplemented method 'generateKodePinjaman'");
+        if (rs.next()) {
+            String kodeTerakhir = rs.getString("kode_pinjaman");
+            String angkaStr = kodeTerakhir.substring(3);
+
+            int angka = Integer.parseInt(angkaStr) + 1;
+
+            return "PJ" + String.format("%04d", angka);
+        } else {
+            return "PJ-0001";
+        }
+
+        // throw new UnsupportedOperationException("Unimplemented method
+        // 'generateKodePinjaman'");
+        // }
     }
 }
