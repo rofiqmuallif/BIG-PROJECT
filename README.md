@@ -59,7 +59,7 @@ Tabel `users` telah dilengkapi dengan enkripsi teks biasa untuk kemudahan demo. 
   * Username: `admin`
   * Password: `admin123`
 * **Level Petugas:**
-  * Username: `hasan`
+  * Username: `petugas`
   * Password: `123456`
 
 ### 3. Library yang Digunakan (Dependencies)
