@@ -1,6 +1,6 @@
 package model;
 
-public class Produk {
+public class Produk extends BaseEntity{
     private int id;
     private String kodeProduk;
     private String namaProduk;
@@ -28,6 +28,10 @@ public class Produk {
         this.harga = harga;
         this.stok = stok;
         this.satuan = satuan;
+    }
+     @Override
+    public String getDisplayName() {
+        return namaProduk;
     }
 
     // Getter & Setter
