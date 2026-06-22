@@ -121,7 +121,7 @@ public class SimpanPinjamView extends Application {
         form.add(tfJumlah, 1, 2);
         form.add(new Label("Keterangan"), 0, 3);
         form.add(tfKet, 1, 3);
-
+        // tempat tombol
         Button btnTambah = new Button("Tambah");
         Button btnRefresh = new Button("Refresh Data");
         Button btnUpdate = new Button("Update Data");
