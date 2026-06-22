@@ -2,8 +2,10 @@ package model;
 
 import java.time.LocalDate;
 
-public class Transaksi {
-    private int id;
+// Menggabungkan dengan BaseEntity menggunakan kata kunci extends
+public class Transaksi extends BaseEntity {
+    
+    // Properti id dihapus dari sini karena sudah ada di BaseEntity
     private String kodeTransaksi;
     private int idAnggota;
     private int idProduk;
@@ -11,13 +13,9 @@ public class Transaksi {
     private double totalHarga;
     private LocalDate tanggal;
 
-    // Constructor kosong
-    public Transaksi() {}
-
-    // Constructor lengkap (dengan id, untuk hasil SELECT)
-    public Transaksi(int id, String kodeTransaksi, int idAnggota, int idProduk,
-                     int jumlah, double totalHarga, LocalDate tanggal) {
-        this.id = id;
+    // Constructor 1: Tanpa ID (Digunakan saat membuat transaksi baru / INSERT ke database)
+    public Transaksi(String kodeTransaksi, int idAnggota, int idProduk, int jumlah, double totalHarga, LocalDate tanggal) {
+        super(); // Memanggil constructor kosong dari BaseEntity
         this.kodeTransaksi = kodeTransaksi;
         this.idAnggota = idAnggota;
         this.idProduk = idProduk;
@@ -26,9 +24,9 @@ public class Transaksi {
         this.tanggal = tanggal;
     }
 
-    // Constructor tanpa id (untuk INSERT baru)
-    public Transaksi(String kodeTransaksi, int idAnggota, int idProduk,
-                     int jumlah, double totalHarga, LocalDate tanggal) {
+    // Constructor 2: Dengan ID (Digunakan saat mengambil data dari database / SELECT)
+    public Transaksi(int id, String kodeTransaksi, int idAnggota, int idProduk, int jumlah, double totalHarga, LocalDate tanggal) {
+        super(id); // Mengirimkan parameter id ke constructor BaseEntity
         this.kodeTransaksi = kodeTransaksi;
         this.idAnggota = idAnggota;
         this.idProduk = idProduk;
@@ -37,34 +35,59 @@ public class Transaksi {
         this.tanggal = tanggal;
     }
 
-    // Getters
-    public int getId() { return id; }
-    public String getKodeTransaksi() { return kodeTransaksi; }
-    public int getIdAnggota() { return idAnggota; }
-    public int getIdProduk() { return idProduk; }
-    public int getJumlah() { return jumlah; }
-    public double getTotalHarga() { return totalHarga; }
-    public LocalDate getTanggal() { return tanggal; }
-
-    // Setters
-    public void setId(int id) { this.id = id; }
-    public void setKodeTransaksi(String kodeTransaksi) { this.kodeTransaksi = kodeTransaksi; }
-    public void setIdAnggota(int idAnggota) { this.idAnggota = idAnggota; }
-    public void setIdProduk(int idProduk) { this.idProduk = idProduk; }
-    public void setJumlah(int jumlah) { this.jumlah = jumlah; }
-    public void setTotalHarga(double totalHarga) { this.totalHarga = totalHarga; }
-    public void setTanggal(LocalDate tanggal) { this.tanggal = tanggal; }
-
+    // Override method abstrak dari BaseEntity.
+    // Gunakan kode transaksi sebagai nama tampilan singkat.
     @Override
-    public String toString() {
-        return "Transaksi{" +
-                "id=" + id +
-                ", kodeTransaksi='" + kodeTransaksi + '\'' +
-                ", idAnggota=" + idAnggota +
-                ", idProduk=" + idProduk +
-                ", jumlah=" + jumlah +
-                ", totalHarga=" + totalHarga +
-                ", tanggal=" + tanggal +
-                '}';
+    public String getDisplayName() {
+        return kodeTransaksi;
+    }
+
+    // Getter dan Setter khusus untuk properti milik Transaksi saja
+    public String getKodeTransaksi() {
+        return kodeTransaksi;
+    }
+
+    public void setKodeTransaksi(String kodeTransaksi) {
+        this.kodeTransaksi = kodeTransaksi;
+    }
+
+    public int getIdAnggota() {
+        return idAnggota;
+    }
+
+    public void setIdAnggota(int idAnggota) {
+        this.idAnggota = idAnggota;
+    }
+
+    public int getIdProduk() {
+        return idProduk;
+    }
+
+    public void setIdProduk(int idProduk) {
+        this.idProduk = idProduk;
+    }
+
+    public int getJumlah() {
+        return jumlah;
+    }
+
+    public void setJumlah(int jumlah) {
+        this.jumlah = jumlah;
+    }
+
+    public double getTotalHarga() {
+        return totalHarga;
+    }
+
+    public void setTotalHarga(double totalHarga) {
+        this.totalHarga = totalHarga;
+    }
+
+    public LocalDate getTanggal() {
+        return tanggal;
+    }
+
+    public void setTanggal(LocalDate tanggal) {
+        this.tanggal = tanggal;
     }
 }
