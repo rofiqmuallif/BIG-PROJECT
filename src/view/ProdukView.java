@@ -18,7 +18,7 @@ public class ProdukView extends Application {
     private ObservableList<Produk> produkList = FXCollections.observableArrayList();
     private TableView<Produk> table = new TableView<>();
 
-    // Session Data (Mengikuti pola AnggotaView yang benar)
+    // Session Data 
     private String username;
     private String role;
 
