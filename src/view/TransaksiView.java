@@ -13,8 +13,20 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+// Import Tambahan untuk iText PDF
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.Element;
+
+import java.io.File;
+import java.io.FileOutputStream;
 import java.time.LocalDate;
 
 public class TransaksiView extends Application {
@@ -38,15 +50,27 @@ public class TransaksiView extends Application {
 
     private Transaksi selectedTransaksi = null;
 
+    // ===== VARIABEL GLOBAL UNTUK MENAMPUNG DATA LOGIN =====
+    private String loggedInUser = "Admin"; 
+    private String loggedInRole = "Admin"; 
+
+    // ===== CONSTRUCTOR AGAR BISA MENERIMA LEMPARAN DATA LOGIN =====
+    // Constructor Kosong (Wajib ada untuk JavaFX runtime)
+    public TransaksiView() {}
+
+    // Constructor Utama (Dipanggil dari halaman login/dashboard)
+    public TransaksiView(String username, String role) {
+        this.loggedInUser = username;
+        this.loggedInRole = role;
+    }
+
     @Override
     public void start(Stage stage) {
         stage.setTitle("Manajemen Transaksi - Koperasi Merah Putih");
 
         // ===== BAR ATAS (TOMBOL KEMBALI DI ATAS KANAN) =====
-        // Mengubah warna background menjadi biru (#2196F3) dan teks putih
         btnKembali.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-min-width: 90px;");
         
-        // Menggunakan SpacerRegion agar tombol terdorong otomatis ke arah kanan
         HBox topBarBox = new HBox(10, new SpacerRegion(), btnKembali);
         topBarBox.setPadding(new Insets(10, 15, 0, 15));
         topBarBox.setStyle("-fx-alignment: center-right;");
@@ -79,12 +103,14 @@ public class TransaksiView extends Application {
         Button btnUpdate = new Button("Update");
         Button btnHapus  = new Button("Hapus");
         Button btnClear  = new Button("Clear");
+        Button btnExportPdf = new Button("📄 Export PDF"); 
 
         btnTambah.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-min-width: 80px;");
         btnUpdate.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-min-width: 80px;");
         btnHapus.setStyle("-fx-background-color: #f44336; -fx-text-fill: white; -fx-min-width: 80px;");
+        btnExportPdf.setStyle("-fx-background-color: #ff0000; -fx-text-fill: white; -fx-min-width: 100px; -fx-font-weight: bold;");
 
-        HBox btnBox = new HBox(10, btnTambah, btnUpdate, btnHapus, btnClear);
+        HBox btnBox = new HBox(10, btnTambah, btnUpdate, btnHapus, btnClear, btnExportPdf);
         btnBox.setPadding(new Insets(5, 10, 5, 10));
 
         // ===== BAR PENCARIAN =====
@@ -121,6 +147,7 @@ public class TransaksiView extends Application {
         btnHapus.setOnAction(e -> handleHapus());
         btnClear.setOnAction(e -> clearForm());
         btnKembali.setOnAction(e -> handleKembali(stage));
+        btnExportPdf.setOnAction(e -> handleExportPdf(stage)); 
 
         table.getSelectionModel().selectedItemProperty().addListener((obs, old, sel) -> {
             if (sel != null) { selectedTransaksi = sel; populateForm(sel); }
@@ -130,7 +157,6 @@ public class TransaksiView extends Application {
         VBox formBox = new VBox(10, lblTitle, form, btnBox, lblStatus);
         formBox.setPadding(new Insets(10, 15, 15, 15));
 
-        // Letakkan topBarBox paling pertama di dalam root VBox
         VBox root = new VBox(10, topBarBox, formBox, new Separator(), searchBarBox, table);
         root.setPadding(new Insets(10));
 
@@ -169,14 +195,69 @@ public class TransaksiView extends Application {
         table.setItems(sortedData);
     }
 
+    // ===== LOGIKA TOMBOL KEMBALI DINAMIS (ADMIN / PETUGAS) =====
     private void handleKembali(Stage currentStage) {
         currentStage.close();
         try {
-            AnggotaView anggotaView = new AnggotaView();
             Stage newStage = new Stage();
-            anggotaView.start(newStage);
+            new DashboardView(loggedInUser, loggedInRole).start(newStage);
         } catch (Exception ex) {
-            System.out.println("Gagal membuka halaman sebelumnya: " + ex.getMessage());
+            System.out.println("Gagal membuka halaman dashboard: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
+
+    private void handleExportPdf(Stage stage) {
+        if (dataList.isEmpty()) {
+            setStatus("⚠️ Tidak ada data untuk diexport.", "orange");
+            return;
+        }
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Simpan Laporan Transaksi PDF");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files (*.pdf)", "*.pdf"));
+        fileChooser.setInitialFileName("Laporan_Transaksi_" + LocalDate.now() + ".pdf");
+        
+        File file = fileChooser.showSaveDialog(stage);
+        
+        if (file != null) {
+            try {
+                Document document = new Document();
+                PdfWriter.getInstance(document, new FileOutputStream(file));
+                document.open();
+                
+                Paragraph title = new Paragraph("LAPORAN DATA TRANSAKSI\nKOPERASI MERAH PUTIH\n\n");
+                title.setAlignment(Element.ALIGN_CENTER); 
+                document.add(title);
+                
+                PdfPTable pdfTable = new PdfPTable(7);
+                pdfTable.setWidthPercentage(100);
+                
+                String[] headers = {"ID", "Kode", "ID Anggota", "ID Produk", "Jumlah", "Total Harga", "Tanggal"};
+                for (String header : headers) {
+                    PdfPCell cell = new PdfPCell(new Phrase(header));
+                    pdfTable.addCell(cell);
+                }
+                
+                for (Transaksi t : table.getItems()) {
+                    pdfTable.addCell(String.valueOf(t.getId()));
+                    pdfTable.addCell(t.getKodeTransaksi());
+                    pdfTable.addCell(String.valueOf(t.getIdAnggota()));
+                    pdfTable.addCell(String.valueOf(t.getIdProduk()));
+                    pdfTable.addCell(String.valueOf(t.getJumlah()));
+                    pdfTable.addCell(String.format("Rp %,.2f", t.getTotalHarga()));
+                    pdfTable.addCell(t.getTanggal().toString());
+                }
+                
+                document.add(pdfTable);
+                document.close();
+                
+                setStatus("✅ Laporan Berhasil diexport ke PDF!", "green");
+                
+            } catch (Exception ex) {
+                setStatus("❌ Gagal export PDF: " + ex.getMessage(), "red");
+                ex.printStackTrace();
+            }
         }
     }
 
@@ -276,7 +357,6 @@ public class TransaksiView extends Application {
 
     public static void main(String[] args) { launch(args); }
 
-    // Komponen pembantu untuk meratakan komponen ke kanan di dalam HBox
     private static class SpacerRegion extends Region {
         public SpacerRegion() {
             HBox.setHgrow(this, Priority.ALWAYS);
