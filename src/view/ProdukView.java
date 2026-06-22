@@ -95,7 +95,7 @@ public class ProdukView extends Application {
         // Logika Aksi Tombol Kembali ke DashboardView
         btnKembali.setOnAction(e -> {
             try {
-                DashboardView dashboard = new DashboardView(username, role);
+                DashboardView dashboard = new DashboardView("Admin", "admin");
                 Stage mainStage = new Stage();
                 dashboard.start(mainStage);
                 
