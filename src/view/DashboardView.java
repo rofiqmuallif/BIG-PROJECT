@@ -1,5 +1,6 @@
 package view;
 
+import javafx.application.Application;
 import javafx.geometry.*;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -9,8 +10,8 @@ import javafx.stage.Stage;
 
 public class DashboardView {
 
-    private String username;
-    private String role;
+    private final String username;
+    private final String role;
 
     public DashboardView(String username, String role) {
         this.username = username;
@@ -21,7 +22,6 @@ public class DashboardView {
         String normalizedRole = role == null ? "" : role.trim().toLowerCase();
         boolean isAdmin = "admin".equals(normalizedRole);
 
-        // ── HEADER ──
         Label lblJudul = new Label("Koperasi Merah Putih");
         lblJudul.setFont(Font.font("Arial", 22));
         lblJudul.setStyle("-fx-font-weight: bold; -fx-text-fill: white;");
@@ -35,6 +35,7 @@ public class DashboardView {
         Button btnLogout = new Button("Logout");
         btnLogout.setStyle("-fx-background-color: white; -fx-text-fill: #b71c1c; " +
                 "-fx-font-weight: bold;");
+
         btnLogout.setOnAction(e -> {
             stage.close();
             try {
@@ -47,14 +48,13 @@ public class DashboardView {
         VBox judulBox = new VBox(3, lblJudul, lblSub, lblUser);
         judulBox.setAlignment(Pos.CENTER_LEFT);
 
-        HBox header = new HBox();
-        header.getChildren().addAll(judulBox, btnLogout);
+        HBox header = new HBox(judulBox, btnLogout);
+
         HBox.setHgrow(judulBox, Priority.ALWAYS);
         header.setAlignment(Pos.CENTER);
         header.setPadding(new Insets(20, 30, 20, 30));
         header.setStyle("-fx-background-color: #b71c1c;");
 
-        // ── MENU CARDS ──
         Button btnAnggota = buatCard("👤", "Kelola Anggota",
                 "Kelola data anggota koperasi", "#1565C0");
         Button btnProduk = buatCard("📦", "Kelola Produk & Stok",
@@ -64,46 +64,18 @@ public class DashboardView {
         Button btnSimpanPinjam = buatCard("🏦", "Kelola Simpan Pinjam",
                 "Kelola simpanan dan pinjaman", "#6A1B9A");
 
-        // ── AKSI MENU ──
-        btnAnggota.setOnAction(e -> {
-            try {
-                stage.close();
-                new AnggotaView(username, role).start(new Stage());
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        });
+        btnAnggota.setOnAction(e ->
+            buka(stage, new AnggotaView(username, role)));
 
+        btnProduk.setOnAction(e ->
+            buka(stage, new ProdukView(username, role)));
         
-        btnProduk.setOnAction(e -> {
-            try {
-                stage.close();
-                new ProdukView(username, role).start(new Stage());
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        });
+        btnTransaksi.setOnAction(e ->
+            buka(stage, new TransaksiView(username, role)));
 
-        btnTransaksi.setOnAction(e -> {
-            try {
-                stage.close();
-                new TransaksiView(username, role).start(new Stage());
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        });
+        btnSimpanPinjam.setOnAction(e ->
+            buka(stage, new SimpanPinjamView(username, role)));
 
-        btnSimpanPinjam.setOnAction(e -> {
-            try {
-                stage.close();
-                new SimpanPinjamView(username, role).start(new Stage());
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        });
-
-
-        // ── GRID MENU ──
         GridPane grid = new GridPane();
         grid.setHgap(20);
         grid.setVgap(20);
@@ -118,14 +90,12 @@ public class DashboardView {
             grid.add(btnSimpanPinjam, 1, 1);
         }
 
-        // ── FOOTER ──
         Label footer = new Label("© 2026 Koperasi Merah Putih - Sistem Informasi");
         footer.setStyle("-fx-text-fill: #999; -fx-font-size: 11px;");
         HBox footerBox = new HBox(footer);
         footerBox.setAlignment(Pos.CENTER);
         footerBox.setPadding(new Insets(10));
 
-        // ── LAYOUT UTAMA ──
         VBox root = new VBox(header, grid, footerBox);
         VBox.setVgrow(grid, Priority.ALWAYS);
         root.setStyle("-fx-background-color: #f5f5f5;");
@@ -159,14 +129,7 @@ public class DashboardView {
         btn.setGraphic(card);
         btn.setStyle("-fx-background-color: transparent; -fx-padding: 0;");
 
-        // Efek hover
-        btn.setOnMouseEntered(e -> card.setStyle(
-                "-fx-background-color: derive(" + warna + ", -15%); " +
-                "-fx-background-radius: 10; -fx-cursor: hand;"));
-        btn.setOnMouseExited(e -> card.setStyle(
-                "-fx-background-color: " + warna + "; " +
-                "-fx-background-radius: 10; -fx-cursor: hand;"));
-
+        tambahHover(btn, card, warna);
         return btn;
     }
 
@@ -177,4 +140,25 @@ public class DashboardView {
         alert.setContentText(pesan);
         alert.showAndWait();
     }
+
+    private void buka(Stage stage, Application app) {
+        try {
+            stage.close();
+            app.start(new Stage());
+        } catch (Exception e) {
+            showAlert(e.getMessage());
+        }
+    }
+
+    private void tambahHover(Button btn, VBox card, String warna) {
+        btn.setOnMouseEntered(e ->
+            card.setStyle("-fx-background-color: derive(" + warna + ", -15%);" +
+                        "-fx-background-radius: 10; -fx-cursor: hand;"));
+
+        btn.setOnMouseExited(e ->
+            card.setStyle("-fx-background-color: " + warna + ";" +
+                        "-fx-background-radius: 10; -fx-cursor: hand;"));
+    }
+
+
 }

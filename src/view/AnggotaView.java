@@ -55,7 +55,7 @@ public class AnggotaView extends Application {
     @SuppressWarnings("unchecked")
     public void start(Stage stage) throws Exception {
 
-        Label judul = new Label("MODUL ANGGOTA - Koperasi Merah Putih");
+        Label judul = new Label("KELOLA ANGGOTA - Koperasi Merah Putih");
         judul.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
         Button btnKembaliDashboard = new Button("Kembali");
