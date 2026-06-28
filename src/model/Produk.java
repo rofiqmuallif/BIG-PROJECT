@@ -8,10 +8,8 @@ public class Produk extends BaseEntity{
     private int stok;
     private String satuan;
 
-    // Constructor kosong
     public Produk() {}
 
-    // Constructor lengkap (untuk INSERT, tanpa id)
     public Produk(String kodeProduk, String namaProduk, double harga, int stok, String satuan) {
         this.kodeProduk = kodeProduk;
         this.namaProduk = namaProduk;
@@ -20,7 +18,6 @@ public class Produk extends BaseEntity{
         this.satuan = satuan;
     }
 
-    // Constructor lengkap (untuk SELECT, dengan id)
     public Produk(int id, String kodeProduk, String namaProduk, double harga, int stok, String satuan) {
         this.id = id;
         this.kodeProduk = kodeProduk;
@@ -34,7 +31,6 @@ public class Produk extends BaseEntity{
         return namaProduk;
     }
 
-    // Getter & Setter
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
