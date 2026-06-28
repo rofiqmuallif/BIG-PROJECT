@@ -14,7 +14,6 @@ public class TestProduk {
 
         ProdukDAO dao = new ProdukDAO();
 
-        // 1. Test Tambah
         System.out.println("\n[1] Test Tambah Produk...");
         Produk produkBaru = new Produk("PRD001", "Beras Premium 5kg", 65000, 50, "Karung");
         boolean tambah = dao.tambahProduk(produkBaru);
@@ -24,7 +23,6 @@ public class TestProduk {
         boolean tambah2 = dao.tambahProduk(produkBaru2);
         System.out.println(tambah2 ? "✓ Tambah produk ke-2 berhasil!" : "✗ Tambah produk ke-2 gagal.");
 
-        // 2. Test Get All
         System.out.println("\n[2] Test Ambil Semua Produk...");
         List<Produk> semua = dao.getAllProduk();
         if (!semua.isEmpty()) {
@@ -36,25 +34,21 @@ public class TestProduk {
             System.out.println("✗ Tidak ada data produk.");
         }
 
-        // 3. Test Get By Kode
         System.out.println("\n[3] Test Cari Produk by Kode 'PRD001'...");
         Produk cari = dao.getProdukByKode("PRD001");
         if (cari != null) {
             System.out.println("✓ Ditemukan: " + cari);
 
-            // 4. Test Update
             System.out.println("\n[4] Test Update Produk ID=" + cari.getId() + "...");
             cari.setHarga(67000);
             cari.setStok(45);
             boolean update = dao.updateProduk(cari);
             System.out.println(update ? "✓ Update berhasil!" : "✗ Update gagal.");
 
-            // 5. Test Update Stok
             System.out.println("\n[5] Test Update Stok...");
             boolean stokOk = dao.updateStok(cari.getId(), 40);
             System.out.println(stokOk ? "✓ Update stok berhasil!" : "✗ Update stok gagal.");
 
-            // 6. Test Hapus
             System.out.println("\n[6] Test Hapus Produk ID=" + cari.getId() + "...");
             boolean hapus = dao.hapusProduk(cari.getId());
             System.out.println(hapus ? "✓ Hapus berhasil!" : "✗ Hapus gagal.");
