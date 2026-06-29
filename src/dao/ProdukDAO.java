@@ -15,7 +15,6 @@ public class ProdukDAO {
         this.conn = DatabaseConnection.getConnection();
     }
 
-    // CREATE - Tambah produk baru
     public boolean tambahProduk(Produk produk) {
         String sql = "INSERT INTO produk (kode_produk, nama_produk, harga, stok, satuan) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -32,7 +31,6 @@ public class ProdukDAO {
         }
     }
 
-    // READ ALL - Ambil semua produk
     public List<Produk> getAllProduk() {
         List<Produk> list = new ArrayList<>();
         String sql = "SELECT * FROM produk";
@@ -55,7 +53,6 @@ public class ProdukDAO {
         return list;
     }
 
-    // READ BY ID - Cari produk berdasarkan ID
     public Produk getProdukById(int id) {
         String sql = "SELECT * FROM produk WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -77,7 +74,6 @@ public class ProdukDAO {
         return null;
     }
 
-    // READ BY KODE - Cari produk berdasarkan kode
     public Produk getProdukByKode(String kode) {
         String sql = "SELECT * FROM produk WHERE kode_produk = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -99,7 +95,6 @@ public class ProdukDAO {
         return null;
     }
 
-    // UPDATE - Edit data produk
     public boolean updateProduk(Produk produk) {
         String sql = "UPDATE produk SET kode_produk=?, nama_produk=?, harga=?, stok=?, satuan=? WHERE id=?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -117,7 +112,6 @@ public class ProdukDAO {
         }
     }
 
-    // DELETE - Hapus produk berdasarkan ID
     public boolean hapusProduk(int id) {
         String sql = "DELETE FROM produk WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -130,7 +124,6 @@ public class ProdukDAO {
         }
     }
 
-    // UPDATE STOK - Kurangi/tambah stok (dipakai modul transaksi)
     public boolean updateStok(int id, int stokBaru) {
         String sql = "UPDATE produk SET stok = ? WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {

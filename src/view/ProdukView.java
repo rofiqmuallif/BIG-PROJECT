@@ -18,11 +18,9 @@ public class ProdukView extends Application {
     private ObservableList<Produk> produkList = FXCollections.observableArrayList();
     private TableView<Produk> table = new TableView<>();
 
-    // Session Data 
     private String username;
     private String role;
 
-    // Form fields
     private TextField txtKode   = new TextField();
     private TextField txtNama   = new TextField();
     private TextField txtHarga  = new TextField();
@@ -39,7 +37,6 @@ public class ProdukView extends Application {
 
     private Produk selectedProduk = null;
 
-    // Constructor (Sama seperti AnggotaView)
     public ProdukView() {
         this("", "");
     }
@@ -74,25 +71,21 @@ public class ProdukView extends Application {
         header.setPadding(new Insets(18, 24, 18, 24));
         header.setAlignment(Pos.CENTER_LEFT);
         header.setStyle("-fx-background-color: #C0392B;");
-
-        // Bagian Kiri: Judul Modul
+        
         VBox titles = new VBox(2);
         Label title = new Label("MODUL PRODUK - Koperasi Merah Putih");
         title.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;");
         Label sub = new Label("Koperasi Merah Putih");
         sub.setStyle("-fx-font-size: 12px; -fx-text-fill: #FFCDD2;");
         titles.getChildren().addAll(title, sub);
-
-        // Bagian Tengah: Spacer otomatis untuk mendorong tombol ke ujung kanan
+ 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        // Bagian Kanan: Desain Tombol Kembali Baru (Warna Biru seperti Modul Anggota)
         btnKembali.setStyle("-fx-background-color: #1A73E8; -fx-text-fill: white; -fx-font-weight: bold; "
                 + "-fx-background-radius: 6; -fx-cursor: hand; -fx-padding: 8 20;");
         btnKembali.setMaxWidth(Button.USE_COMPUTED_SIZE);
-
-        // Logika Aksi Tombol Kembali ke DashboardView
+ 
         btnKembali.setOnAction(e -> {
             try {
                 DashboardView dashboard = new DashboardView("Admin", "admin");
@@ -132,8 +125,7 @@ public class ProdukView extends Application {
     @SuppressWarnings("unchecked")
     private VBox buildTableSection() {
         VBox box = new VBox(10);
-
-        // Search bar
+ 
         HBox searchBar = new HBox(8);
         searchBar.setAlignment(Pos.CENTER_LEFT);
         txtCari.setPromptText("Cari nama / kode produk...");
@@ -150,8 +142,7 @@ public class ProdukView extends Application {
         txtCari.setOnAction(e -> cariProduk());
 
         searchBar.getChildren().addAll(txtCari, btnCari, btnRefresh);
-
-        // Columns
+ 
         TableColumn<Produk, Integer> colId   = new TableColumn<>("ID");
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colId.setPrefWidth(45);
@@ -228,7 +219,6 @@ public class ProdukView extends Application {
         btnHapus.setStyle(btnDangerStyle());
         btnBersih.setStyle(btnSecStyle());
 
-        // btnKembali dihilangkan dari pengaturan lebar form bawah
         for (Button b : new Button[]{btnTambah, btnUpdate, btnHapus, btnBersih}) {
             b.setMaxWidth(Double.MAX_VALUE);
         }
@@ -259,8 +249,7 @@ public class ProdukView extends Application {
         bar.getChildren().add(lblStatus);
         return bar;
     }
-
-    // ── CRUD ──────────────────────────────────────────────────────────
+ 
 
     private void loadData() {
         produkList.clear();
@@ -325,8 +314,7 @@ public class ProdukView extends Application {
         }
         setStatus("Hasil pencarian '" + kw + "': " + produkList.size() + " produk.");
     }
-
-    // ── Helpers ───────────────────────────────────────────────────────
+ 
 
     private void isiForm(Produk p) {
         selectedProduk = p;
