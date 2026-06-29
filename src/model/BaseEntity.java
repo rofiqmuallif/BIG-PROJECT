@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public abstract class BaseEntity {
 
     protected int id;
+    
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

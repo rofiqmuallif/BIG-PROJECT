@@ -5,8 +5,6 @@ import model.Pinjaman;
 import java.sql.*;
 import java.util.*;
 
-import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
-
 public class PinjamanDAO {
     private Connection conn = DatabaseConnection.getConnection();
 

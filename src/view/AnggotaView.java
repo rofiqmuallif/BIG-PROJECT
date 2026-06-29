@@ -1,27 +1,27 @@
 package view;
-import dao.AnggotaDAO; 
-import javafx.application.Application; 
-import javafx.collections.FXCollections; 
-import javafx.collections.ObservableList; 
-import javafx.geometry.Insets; 
-import javafx.scene.Scene; 
-import javafx.scene.control.Alert; 
-import javafx.scene.control.Button; 
-import javafx.scene.control.ButtonType; 
-import javafx.scene.control.ComboBox; 
-import javafx.scene.control.Label; 
-import javafx.scene.control.TableColumn; 
-import javafx.scene.control.TableView; 
-import javafx.scene.control.TextField; 
-import javafx.scene.control.cell.PropertyValueFactory; 
-import javafx.scene.layout.GridPane; 
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority; 
-import javafx.scene.layout.Region; 
-import javafx.scene.layout.VBox; 
-import javafx.stage.Stage; 
-import model.Anggota; 
 
+import dao.AnggotaDAO;
+import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import model.Anggota;
 
 public class AnggotaView extends Application {
 
@@ -59,8 +59,10 @@ public class AnggotaView extends Application {
         judul.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
         Button btnKembaliDashboard = new Button("Kembali");
+
         btnKembaliDashboard.setStyle("-fx-background-color: #0862ea; -fx-text-fill: white;");
         btnKembaliDashboard.setPrefWidth(100);
+
         btnKembaliDashboard.setOnAction(e -> {
             try {
                 stage.close();
@@ -69,8 +71,6 @@ public class AnggotaView extends Application {
                 showAlert("Gagal kembali ke dashboard: " + ex.getMessage());
             }
         });
-
-        
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -83,14 +83,13 @@ public class AnggotaView extends Application {
         Button btnCari = new Button("Cari");
         HBox searchBox = new HBox(10, tfCari, btnCari);
         searchBox.setPadding(new Insets(0, 0, 10, 0));
-        
+
         table.getColumns().addAll(
-            buatKolom("ID", "id", 45),
-            buatKolom("Nama", "nama", 170),
-            buatKolom("NIK", "nik", 130),
-            buatKolom("No HP", "noHp", 110),
-            buatKolom("Status", "status", 80)
-        );
+                buatKolom("ID", "id", 45),
+                buatKolom("Nama", "nama", 170),
+                buatKolom("NIK", "nik", 130),
+                buatKolom("No HP", "noHp", 110),
+                buatKolom("Status", "status", 80));
 
         table.setItems(dataList);
         table.setPrefHeight(260);
@@ -129,8 +128,8 @@ public class AnggotaView extends Application {
         form.add(new Label("Status"), 0, 4);
         form.add(cbStatus, 1, 4);
 
-        for (TextField tf : new TextField[]{
-            tfNik, tfNama, tfAlamat, tfNoHp
+        for (TextField tf : new TextField[] {
+                tfNik, tfNama, tfAlamat, tfNoHp
         }) {
             tf.setPrefWidth(250);
         }
@@ -174,8 +173,7 @@ public class AnggotaView extends Application {
                         tfAlamat.getText(),
                         tfNoHp.getText(),
                         cbStatus.getValue(),
-                        java.time.LocalDate.now().toString()
-                );
+                        java.time.LocalDate.now().toString());
 
                 if (dao.tambah(anggota)) {
                     showAlert("Anggota berhasil ditambahkan!");
@@ -201,8 +199,7 @@ public class AnggotaView extends Application {
                         tfAlamat.getText(),
                         tfNoHp.getText(),
                         cbStatus.getValue(),
-                        ""
-                );
+                        "");
 
                 if (dao.update(anggota)) {
                     showAlert("Data berhasil diupdate!");
@@ -285,11 +282,11 @@ public class AnggotaView extends Application {
     }
 
     private <T> TableColumn<Anggota, T> buatKolom(String judul, String properti, int lebar) {
-            TableColumn<Anggota, T> kolom = new TableColumn<>(judul);
-            kolom.setCellValueFactory(new PropertyValueFactory<>(properti));
-            kolom.setPrefWidth(lebar);
-            return kolom;
-        }
+        TableColumn<Anggota, T> kolom = new TableColumn<>(judul);
+        kolom.setCellValueFactory(new PropertyValueFactory<>(properti));
+        kolom.setPrefWidth(lebar);
+        return kolom;
+    }
 
     public static void main(String[] args) {
         launch(args);

@@ -8,9 +8,10 @@ public class Anggota extends BaseEntity {
     private String status;        
     private String tanggalDaftar; 
 
-    public Anggota(int id, String nik, String nama,
-                   String alamat, String noHp, String status, String tanggalDaftar) {
-        super(id); 
+    public Anggota(int id, String nik, String nama, String alamat, String noHp, String status, String tanggalDaftar) {
+
+        super(id);
+        
         this.nik = nik;
         this.nama = nama;
         this.alamat = alamat;
