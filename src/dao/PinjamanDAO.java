@@ -92,8 +92,6 @@ public class PinjamanDAO {
             return "PJ-0001";
         }
 
-        // throw new UnsupportedOperationException("Unimplemented method
-        // 'generateKodePinjaman'");
-        // }
+        
     }
 }
