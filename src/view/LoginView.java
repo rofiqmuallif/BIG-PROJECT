@@ -1,7 +1,7 @@
 package view;
 
-import dao.UserDAO; // DAO untuk autentikasi
-import model.User; // Model User
+import dao.UserDAO; 
+import model.User; 
 import javafx.application.Application;
 import javafx.geometry.*;
 import javafx.scene.Scene;
@@ -10,7 +10,6 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-// Tampilan login sederhana. Mengambil username dan password, lalu memanggil UserDAO.login().
 public class LoginView extends Application {
 
     private UserDAO userDAO = new UserDAO();
@@ -18,7 +17,6 @@ public class LoginView extends Application {
     @Override
     public void start(Stage stage) {
 
-        // ── JUDUL ──
         Label lblJudul = new Label("Koperasi Merah Putih");
         lblJudul.setFont(Font.font("Arial", 22));
         lblJudul.setStyle("-fx-font-weight: bold; -fx-text-fill: #b71c1c;");
@@ -29,7 +27,6 @@ public class LoginView extends Application {
         VBox judul = new VBox(5, lblJudul, lblSub);
         judul.setAlignment(Pos.CENTER);
 
-        // ── FORM LOGIN ──
         Label lblUsername = new Label("Username");
         TextField tfUsername = new TextField();
         tfUsername.setPromptText("Masukkan username");
@@ -40,7 +37,6 @@ public class LoginView extends Application {
         pfPassword.setPromptText("Masukkan password");
         pfPassword.setPrefWidth(280);
 
-        // ── TOMBOL ──
         Button btnLogin = new Button("LOGIN");
         btnLogin.setPrefWidth(280);
         btnLogin.setStyle("-fx-background-color: #b71c1c; -fx-text-fill: white; " +
@@ -50,42 +46,33 @@ public class LoginView extends Application {
         btnKeRegister.setStyle("-fx-background-color: transparent; -fx-text-fill: #b71c1c; " +
                 "-fx-border-color: transparent;");
 
-        // ── AKSI LOGIN ──
         btnLogin.setOnAction(e -> {
-            // Ambil input dari form
             String username = tfUsername.getText().trim();
             String password = pfPassword.getText().trim();
 
-            // Validasi sederhana: jangan proses jika kosong
             if (username.isEmpty() || password.isEmpty()) {
                 showAlert("Username dan password wajib diisi!");
                 return;
             }
 
             try {
-                // Memanggil method login di UserDAO
                 User user = userDAO.login(username, password);
                 if (user != null) {
-                    // Jika login sukses, tampilkan pesan dan buka DashboardView
                     showAlert("Selamat datang, " + user.getUsername() + "! (" + user.getRole() + ")");
                     stage.close();
                     new DashboardView(user.getUsername(), user.getRole()).start(new Stage());
                 } else {
-                    // Jika tidak ditemukan, beri tahu user
                     showAlert("Username atau password salah!");
                 }
             } catch (Exception ex) {
-                // Tangani error koneksi/SQL
                 showAlert("Error: " + ex.getMessage());
             }
         });
 
-        // Tombol untuk membuka form registrasi
         btnKeRegister.setOnAction(e -> {
             new RegisterView().start(new Stage());
         });
 
-        // ── LAYOUT ──
         VBox form = new VBox(10,
                 lblUsername, tfUsername,
                 lblPassword, pfPassword,
@@ -106,7 +93,6 @@ public class LoginView extends Application {
         stage.show();
     }
 
-    // Menampilkan dialog informasi singkat.
     private void showAlert(String pesan) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Info");
