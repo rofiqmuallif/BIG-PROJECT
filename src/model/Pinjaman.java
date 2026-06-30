@@ -1,18 +1,18 @@
 package model;
 
-public class Pinjaman {
-    private int id;
-    private String kodePinjaman; // Penyesuaian DB
+public class Pinjaman extends BaseEntity {
+
+    private String kodePinjaman; 
     private int idAnggota;
-    private double jumlahPinjam; // Penyesuaian DB
-    private double jumlahBayar; // Penyesuaian DB
-    private double cicilanPerBulan; // Penyesuaian DB
+    private double jumlahPinjam; 
+    private double jumlahBayar; 
+    private double cicilanPerBulan; 
     private String status;
-    private String tanggalPinjam; // Penyesuaian DB
+    private String tanggalPinjam; 
 
     public Pinjaman(int id, String kodePinjaman, int idAnggota, double jumlahPinjam,
             double jumlahBayar, double cicilanPerBulan, String status, String tanggalPinjam) {
-        this.id = id;
+        super(id);
         this.kodePinjaman = kodePinjaman;
         this.idAnggota = idAnggota;
         this.jumlahPinjam = jumlahPinjam;
@@ -22,7 +22,12 @@ public class Pinjaman {
         this.tanggalPinjam = tanggalPinjam;
     }
 
-    // Getters
+    @Override
+    public String getDisplayName() {
+        return kodePinjaman;
+    }
+
+    
     public int getId() {
         return id;
     }
@@ -55,7 +60,7 @@ public class Pinjaman {
         return tanggalPinjam;
     }
 
-    // Setters
+    
     public void setJumlahBayar(double jumlahBayar) {
         this.jumlahBayar = jumlahBayar;
     }
