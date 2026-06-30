@@ -2,10 +2,9 @@ package model;
 
 import java.time.LocalDate;
 
-// Menggabungkan dengan BaseEntity menggunakan kata kunci extends
 public class Transaksi extends BaseEntity {
     
-    // Properti id dihapus dari sini karena sudah ada di BaseEntity
+   
     private String kodeTransaksi;
     private int idAnggota;
     private int idProduk;
@@ -13,9 +12,8 @@ public class Transaksi extends BaseEntity {
     private double totalHarga;
     private LocalDate tanggal;
 
-    // Constructor 1: Tanpa ID (Digunakan saat membuat transaksi baru / INSERT ke database)
     public Transaksi(String kodeTransaksi, int idAnggota, int idProduk, int jumlah, double totalHarga, LocalDate tanggal) {
-        super(); // Memanggil constructor kosong dari BaseEntity
+        super();
         this.kodeTransaksi = kodeTransaksi;
         this.idAnggota = idAnggota;
         this.idProduk = idProduk;
@@ -24,9 +22,8 @@ public class Transaksi extends BaseEntity {
         this.tanggal = tanggal;
     }
 
-    // Constructor 2: Dengan ID (Digunakan saat mengambil data dari database / SELECT)
     public Transaksi(int id, String kodeTransaksi, int idAnggota, int idProduk, int jumlah, double totalHarga, LocalDate tanggal) {
-        super(id); // Mengirimkan parameter id ke constructor BaseEntity
+        super(id);
         this.kodeTransaksi = kodeTransaksi;
         this.idAnggota = idAnggota;
         this.idProduk = idProduk;
@@ -35,14 +32,11 @@ public class Transaksi extends BaseEntity {
         this.tanggal = tanggal;
     }
 
-    // Override method abstrak dari BaseEntity.
-    // Gunakan kode transaksi sebagai nama tampilan singkat.
     @Override
     public String getDisplayName() {
         return kodeTransaksi;
     }
 
-    // Getter dan Setter khusus untuk properti milik Transaksi saja
     public String getKodeTransaksi() {
         return kodeTransaksi;
     }
