@@ -16,7 +16,6 @@ import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-// Import Tambahan untuk iText PDF
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
@@ -35,11 +34,9 @@ public class TransaksiView extends Application {
     private TableView<Transaksi> table = new TableView<>();
     private ObservableList<Transaksi> dataList = FXCollections.observableArrayList();
 
-    // Komponen Pencarian & Kembali
     private TextField txtCari = new TextField();
     private Button btnKembali = new Button("⬅ Kembali");
 
-    // Form fields
     private TextField txtKode       = new TextField();
     private TextField txtIdAnggota  = new TextField();
     private TextField txtIdProduk   = new TextField();
@@ -50,15 +47,11 @@ public class TransaksiView extends Application {
 
     private Transaksi selectedTransaksi = null;
 
-    // ===== VARIABEL GLOBAL UNTUK MENAMPUNG DATA LOGIN =====
     private String loggedInUser = "Admin"; 
     private String loggedInRole = "Admin"; 
 
-    // ===== CONSTRUCTOR AGAR BISA MENERIMA LEMPARAN DATA LOGIN =====
-    // Constructor Kosong (Wajib ada untuk JavaFX runtime)
     public TransaksiView() {}
 
-    // Constructor Utama (Dipanggil dari halaman login/dashboard)
     public TransaksiView(String username, String role) {
         this.loggedInUser = username;
         this.loggedInRole = role;
@@ -68,14 +61,12 @@ public class TransaksiView extends Application {
     public void start(Stage stage) {
         stage.setTitle("Manajemen Transaksi - Koperasi Merah Putih");
 
-        // ===== BAR ATAS (TOMBOL KEMBALI DI ATAS KANAN) =====
         btnKembali.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-min-width: 90px;");
         
         HBox topBarBox = new HBox(10, new SpacerRegion(), btnKembali);
         topBarBox.setPadding(new Insets(10, 15, 0, 15));
         topBarBox.setStyle("-fx-alignment: center-right;");
 
-        // ===== FORM =====
         Label lblTitle = new Label("Form Transaksi");
         lblTitle.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
@@ -98,7 +89,6 @@ public class TransaksiView extends Application {
         form.add(new Label("Total Harga (Rp):"),0, 4); form.add(txtTotalHarga, 1, 4);
         form.add(new Label("Tanggal:"),        0, 5); form.add(dpTanggal, 1, 5);
 
-        // ===== BUTTONS =====
         Button btnTambah = new Button("Tambah");
         Button btnUpdate = new Button("Update");
         Button btnHapus  = new Button("Hapus");
@@ -113,7 +103,6 @@ public class TransaksiView extends Application {
         HBox btnBox = new HBox(10, btnTambah, btnUpdate, btnHapus, btnClear, btnExportPdf);
         btnBox.setPadding(new Insets(5, 10, 5, 10));
 
-        // ===== BAR PENCARIAN =====
         txtCari.setPromptText("Cari berdasarkan Kode / ID Anggota...");
         txtCari.setPrefWidth(250);
 
@@ -121,7 +110,6 @@ public class TransaksiView extends Application {
         searchBarBox.setPadding(new Insets(5, 10, 5, 10));
         searchBarBox.setStyle("-fx-alignment: center-left;");
 
-        // ===== TABLE =====
         TableColumn<Transaksi, Integer> colId    = col("ID", "id", 50);
         TableColumn<Transaksi, String>  colKode  = col("Kode", "kodeTransaksi", 100);
         TableColumn<Transaksi, Integer> colAngg  = col("ID Anggota", "idAnggota", 90);
@@ -141,7 +129,6 @@ public class TransaksiView extends Application {
         initSearchFilter();
         table.setPrefHeight(300);
 
-        // ===== EVENT HANDLERS =====
         btnTambah.setOnAction(e -> handleTambah());
         btnUpdate.setOnAction(e -> handleUpdate());
         btnHapus.setOnAction(e -> handleHapus());
@@ -153,7 +140,6 @@ public class TransaksiView extends Application {
             if (sel != null) { selectedTransaksi = sel; populateForm(sel); }
         });
 
-        // ===== LAYOUT UTAMA =====
         VBox formBox = new VBox(10, lblTitle, form, btnBox, lblStatus);
         formBox.setPadding(new Insets(10, 15, 15, 15));
 
@@ -195,7 +181,6 @@ public class TransaksiView extends Application {
         table.setItems(sortedData);
     }
 
-    // ===== LOGIKA TOMBOL KEMBALI DINAMIS (ADMIN / PETUGAS) =====
     private void handleKembali(Stage currentStage) {
         currentStage.close();
         try {
